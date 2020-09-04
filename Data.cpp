@@ -10,6 +10,7 @@ struct AnimDataRef
 struct AnimData
 {
 	AnimDataRef FileRef;
+	std::vector<sf::texture> Textures;
 	
 };
 
