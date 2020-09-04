@@ -7,3 +7,9 @@ struct AnimDataRef
 	std::vector<std::string> FileNames;
 };
 
+struct AnimData
+{
+	AnimDataRef FileRef;
+	
+};
+
