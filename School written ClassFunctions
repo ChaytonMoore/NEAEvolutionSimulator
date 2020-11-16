@@ -230,3 +230,18 @@ Creature* CreateChild(Creature* Base,int seed)
 	}
 	
 }
+
+std::vector<Creature*> Reproduce(std::vector<Creature*> StartCreatures,std::vector<float> Fitness)
+{
+    //The two lists need to be the same length
+    //Firstly need to order then according to fitness, use a pretty normal sorting algorithm list will only be a max 100 long
+    std::vector<Creature*> SortedCreatures;
+    float value;
+    for (int i = 0; i < Fitness.size(); i++)
+    {
+        for (int j = 0; j < Fitness.size(); j++) 
+        {
+            
+        }
+    }
+}
