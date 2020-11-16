@@ -1,0 +1,193 @@
+#include "Creature.h"
+#include "Structures.h"
+#include "stdlib.h"
+
+
+//Might be a lot better if I don't use classes for muscles and Bones
+//Or maybe just make muscle and bone be the same class with a different parameter
+
+//This function is used for creating a new random creature, it takes a seed if I want to use seeds.
+
+//std::vector 
+
+template<typename T>
+std::vector<T> AppendVector(std::vector<T> a, std::vector<T> b)
+{
+	a.insert(std::end(a), std::begin(b), std::end(b));
+	return a;
+}
+
+Creature* GenerateNewRandom(int seed)
+{
+	//firstly create the new creature
+	Creature* Output = new Creature;
+
+
+	//Then create the seed
+	srand(seed);
+
+	//Use the random numbers to 
+	for (size_t i = 0; i < rand() % 3 + 1; i++)
+	{
+		Output->Nodes.push_back(new Node);
+	}
+
+	int ConnectionLimit;
+	ConnectionLimit = Output->Nodes.size();
+	for (size_t i = 0; i < rand() % ConnectionLimit; i++)
+	{
+		//For random generation the connections need to be random
+		if (rand()%1 == 0)
+		{
+			Output->Muscles.push_back(new Muscle);
+		}
+		else
+		{
+			Output->Bones.push_back(new Bone);
+		}
+	}
+
+	//Now set the locations of the nodes.
+
+	for (size_t i = 0; i < Output->Nodes.size(); i++)
+	{
+		//This is used to make sure that the nodes are atleast a small distance from each other
+		do
+		{
+			Output->Nodes[i]->Location = Position(rand() % 40 - 20,rand()% 40 -20);
+			//Remember all locations are relative to the location of the creature
+			
+
+			//TODO: make sure the nodes don't spawn to near to each other
+			break;
+		} while (true);
+	}
+
+	//Now to use the connections to connect the nodes
+	
+	std::vector<Connection*> TempConnections;
+	TempConnections.insert(std::end(TempConnections), std::begin(Output->Bones), std::end(Output->Bones));
+	TempConnections.insert(std::end(TempConnections), std::begin(Output->Muscles), std::end(Output->Muscles));
+
+	int RandomNodeIdx1,RandomNodeIdx2;
+	for (size_t i = 0; i < TempConnections.size(); i++)
+	{
+		do
+		{
+			//Make sure the random nodes are not the same
+			RandomNodeIdx1 = rand() % Output->Nodes.size();
+			RandomNodeIdx2 = rand() % Output->Nodes.size();
+			if (RandomNodeIdx1!=RandomNodeIdx2)
+			{
+				break;
+			}
+		} while (true);
+		Output->Nodes[RandomNodeIdx1]->Connections.push_back(TempConnections[i]);
+		Output->Nodes[RandomNodeIdx2]->Connections.push_back(TempConnections[i]);
+
+		//This connections nodes together
+
+		//TODO make sure that there are no connections in the same place
+	}
+	return Output;
+}
+
+Creature* CreateChild(Creature* Base,int seed)
+{
+	//Creates another creature based on a creature, also takes a seed
+	Creature* Output = new Creature(*Base);
+
+	srand(seed);
+	//Now to randomise a few of the variables.
+	
+	//The number of nodes can be increased or decreased at random by 1
+	if(rand()%6 == 0)
+	{
+	    //The chance that a node is either added or removed
+	    if(rand()%1 == 0)
+	    {
+	        Output->Nodes.push_back(new Node);
+	        //Add new Node
+	    }
+	    else
+	    {
+	        Output->Nodes.pop_back();
+	    }
+	}
+	int RandomNode;
+	for (size_t i = 0; i < Output->Nodes.size(); i++)
+	{
+	    //firstly check to see if any node has no connections
+	    if(Output->Nodes[i]->Connections.size() == 0)
+	    {
+	        //For all nodes that are found to be lacking a connection one will be generated to a random node.
+	        //Randomise whether it will be a muscle or a bone
+	        if(rand()%1 == 0)
+	        {
+	            Output->Nodes[i]->Connections.push_back(new Muscle);
+	            Output->Muscles.push_back(Output->Nodes[i]->Connections[0]);
+	            //Also needs to be added to the bones or muscles list
+	        }
+	        else
+	        {
+	            Output->Nodes[i]->Connections.push_back(new Bone);
+	            Output->Bones.push_back(Output->Nodes[i]->Connections[0]);
+	        }
+	        //Now to connect it to a random Node, can't be itself
+	        do
+	        {
+	            RandomNode = rand()%Output->Nodes.size();
+	        
+	        }(while RandomNode!=i)
+	        //Now add the connection to that Nodes
+	        Output->Nodes[RandomNode]->Connections.push_back(Output->Nodes[i]->Connections[0]);
+	    }
+
+	}
+	
+	//Now the probability that the a bone will change to a muscle and a muscle to a bone
+	
+	for (int i = 0; i < Output->Muscles.size(); i++)
+	{
+	    if(rand()%25==0)//of course all these random numbers might be changed
+	    {
+	        //Generate the replacement
+	        Output->Bones.push_back(new Bone);
+	        for (int j = 0; j < Output->Nodes.size(); j++) 
+	        {
+	            if(Output->Nodes[j].Connections.contains(Output->Muscles[i]))
+	            {
+	                Output->Nodes[j].Connections[Output->Nodes[j].Connections.find(Output->Muscles[i])] = Output->Bones[Output.Bones.size()]
+	                //That's a long and confusing line, it replaces references
+	                
+	            }
+	        }
+	        Output->Muscles.erase(i);
+	        
+	    }
+	}
+	
+	for (int i = 0; i < Output->Bones.size(); i++)
+	{
+	    //This is just copy and paste code from the muscle replacement
+	    if(rand()%25 == 0)
+	    {
+	        
+	        //Generate the replacement
+	        Output->Muscle.push_back(new Muscle);
+	        for (int j = 0; j < Output->Nodes.size(); j++) 
+	        {
+	            if(Output->Nodes[j].Connections.contains(Output->Bones[i]))
+	            {
+	                Output->Nodes[j].Connections[Output->Nodes[j].Connections.find(Output->Bones[i])] = Output->Muscles[Output.Muscles.size()]
+	                //That's a long and confusing line, it replaces references
+	                
+	            }
+	        }
+	        Output->Bones.erase(i);
+	    }
+	    
+	    
+	}
+	
+}
