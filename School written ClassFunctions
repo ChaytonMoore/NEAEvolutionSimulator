@@ -101,7 +101,7 @@ Creature* CreateChild(Creature* Base,int seed)
 	//Now to randomise a few of the variables.
 	
 	//The number of nodes can be increased or decreased at random by 1
-	if(rand()%6 == 0)
+	if(rand()%32 == 0)
 	{
 	    //The chance that a node is either added or removed
 	    if(rand()%1 == 0)
@@ -188,6 +188,45 @@ Creature* CreateChild(Creature* Base,int seed)
 	    }
 	    
 	    
+	}
+	
+	//Now to modify some of the values for the muscles, all bones are the same.
+	for (int i = 0; i < Output->Muscles.size(); i++) 
+	{
+	    if(rand()%20 == 0)
+	    {
+	        //Change the strength of the Muscles
+	        if(rand()%1 == 0)
+	        {
+	            Output.Muscles[i].strength = Output.Muscles[i].strength * 1.01;
+	        }
+	        else
+	        {
+	            Output.Muscles[i].strength = Output.Muscles[i].strength * 0.99;
+	        }
+	    }
+	    
+	    if(rand()%25 == 0)
+	    {
+	       	if(rand()%1 == 0)
+	        {
+	            Output.Muscles[i].frequency = Output.Muscles[i].frequency * 1.01;
+	        }
+	        else
+	        {
+	            Output.Muscles[i].frequency = Output.Muscles[i].frequency * 0.99;
+	        } 
+	    }
+	}
+	
+	//Also want to modify the locations of the Nodes
+	for (int i = 0; i < Output->Nodes.size(); i++) 
+	{
+	    if(rand()%25 == 0)
+	    {
+	        Nodes.Position.x += rand()%4 -2;
+	        Nodes.Position.y += rand()%4 -2;
+	    }
 	}
 	
 }
