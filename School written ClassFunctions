@@ -1,7 +1,9 @@
 #include "Creature.h"
 #include "Structures.h"
 #include "stdlib.h"
-
+#include <iostream>
+#include <fstream>
+#include <string>
 
 //Might be a lot better if I don't use classes for muscles and Bones
 //Or maybe just make muscle and bone be the same class with a different parameters
@@ -9,7 +11,6 @@
 //This function is used for creating a new random creature, it takes a seed if I want to use seeds.
 
 //std::vector 
-
 template<typename T>
 std::vector<T> AppendVector(std::vector<T> a, std::vector<T> b)
 {
@@ -273,3 +274,17 @@ std::vector<Creature*> Reproduce(std::vector<Creature*> StartCreatures,std::vect
     return SortedCreatures;
     
 }
+
+void SaveCreatures(std::vector<Creature*> Creatures,std::string Filename)
+{
+  ofstream SaveFile;
+  myfile.open (Filename);
+  
+  for (int i = 0; i < Creatures.size(); i++) 
+  { 
+      SaveFile << Creatures[i];
+  }
+  
+  SaveFile.close()
+}
+
