@@ -4,7 +4,7 @@
 
 
 //Might be a lot better if I don't use classes for muscles and Bones
-//Or maybe just make muscle and bone be the same class with a different parameter
+//Or maybe just make muscle and bone be the same class with a different parameters
 
 //This function is used for creating a new random creature, it takes a seed if I want to use seeds.
 
@@ -231,17 +231,45 @@ Creature* CreateChild(Creature* Base,int seed)
 	
 }
 
-std::vector<Creature*> Reproduce(std::vector<Creature*> StartCreatures,std::vector<float> Fitness)
+std::vector<Creature*> Reproduce(std::vector<Creature*> StartCreatures,std::vector<float> Fitness,int seed)
 {
     //The two lists need to be the same length
     //Firstly need to order then according to fitness, use a pretty normal sorting algorithm list will only be a max 100 long
     std::vector<Creature*> SortedCreatures;
     float value;
+    int index;
     for (int i = 0; i < Fitness.size(); i++)
     {
+        value = Fitness[i];
+        index = 0;
         for (int j = 0; j < Fitness.size(); j++) 
         {
-            
+            if(Fitness[j]>Fitness[i])
+            {
+                value = Fitness[j];
+                index = j;
+            }
         }
+        Fitness.erase(j);
+        SortedCreatures.push_back(StartCreatures[j]);
+        StartCreatures.erase(j);
+        
     }
+    
+    //Now the half of the list with lower fitness
+    for (int i = 0; i < SortedCreatures.size()/2; i++) 
+    {
+        SortedCreatures.pop_back();
+    }
+    
+    
+    for (int i = 0; i < SortedCreatures.size(); i++)
+    {
+        SortedCreatures.push_back(CreateChild(SortedCreatures[i],seed));
+        seed++;
+        //Increment the seed so that the new creatures don't all have the same mutations
+    }
+    
+    return SortedCreatures;
+    
 }
