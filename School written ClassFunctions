@@ -278,8 +278,9 @@ std::vector<Creature*> Reproduce(std::vector<Creature*> StartCreatures,std::vect
 void SaveCreatures(std::vector<Creature*> Creatures,std::string Filename)
 {
   ofstream SaveFile;
-  myfile.open (Filename);
+  SaveFile.open (Filename);
   
+  SaveFile << Creatures.size();
   for (int i = 0; i < Creatures.size(); i++) 
   { 
       SaveFile << Creatures[i];
@@ -288,3 +289,12 @@ void SaveCreatures(std::vector<Creature*> Creatures,std::string Filename)
   SaveFile.close()
 }
 
+std::vector<Creature*> LoadCreatures(std::string Filename)
+{
+    ofstream SaveFile;
+    SaveFile.open (Filename);
+    int VectorSize;
+    
+    std::vector<Creature*> Output = new Creature[]
+    
+}
