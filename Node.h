@@ -6,6 +6,8 @@ class Node :
 public:
 	std::vector<Connection*> Connections;
 	float Weight;
+	Position Location;
+	//Think this line ^ is correct words might be the other way round.
 
 	Node()
 	{
