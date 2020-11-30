@@ -4,83 +4,21 @@
 
 
 //This function will take a font from 
-sf::Font GetDefaultFont(DataCarrier* GetFontFrom)
+/*
+
+
+bool operator>(const sf::Vector2i& a, const sf::Vector2i& b)
 {
-    
-    sf::Font font;
-    if (!font.loadFromFile(FilePath+DefaultFontFileName)) //This concats strings such that the font file is inside the file path
-    {
-        return nullptr;
-    }
-    return font;
+	return a.x > b.x && a.y > b.y;
 }
 
-
-
-
-class Button
+bool operator<(const sf::Vector2i& a, const sf::Vector2i& b)
 {
-    sf::vector2i BLeft;//Bottom left of the Button
-    sf::vector2i TRight;//Top right of the the Button
-    bool isPressed = false;
-    bool DefaultFunctionality = true;
-    int (* fcnPtr)();//The function that is executed when the button is clicked unless the DefaultFunctionality variable is false 
-    
-    
-    
-    sf::Text text;
-
-    void InitButton(std::string ButtonText,DataCarrier* FontData)
-    {
-        // select the font
-        text.setFont(GetDefaultFont()); //Need to get the DataCarrier that contains the default font
-    
-        // set the string to display
-        text.setString(ButtonText);
-    
-        // set the character size
-        text.setCharacterSize(12);
-    }
-    
-    //This function is for when I don't want to put a button there.
-    void InitButton(DataCarrier* FontData)
-    {
-                // select the font
-        text.setFont(GetDefaultFont()); //Need to get the DataCarrier that contains the default font
-    
-        // set the string to display
-        text.setString("Button");
-    
-        // set the character size
-        text.setCharacterSize(12);
-    }
+	return a.x < b.x && a.y < b.y;
+}
+*/
 
 
-    
-    bool isClicked()
-    {
-        sf::Vector2i MousePosition = sf::Mouse::getPosition();;
-        if (MousePosition>BLeft && MousePosition<TRight && sf::Mouse::isButtonPressed(sf::Mouse::Left))
-        {
-            isPressed = true;
-        }
-        else
-        {
-            isPressed = false;
-        }
-    }
-    
-    void ButtonTick()
-    {
-        //This is the code for the button that is executed every tick
-        if(DefaultFunctionality&&isClicked())
-        {
-            fcnPte();
-            //Executes the buttons default code
-        }
-    }
-    
-};
 
 //Might try to use function pointers for the functions of the buttons
 
@@ -89,10 +27,18 @@ class Button
 int OpenUIWindow()
 {
 	sf::RenderWindow window(sf::VideoMode(300, 200), "Evolution Simulator");
-	sf::CircleShape shape(100.f);
+	sf::RectangleShape shape(sf::Vector2f(100, 50));
 	shape.setFillColor(sf::Color::Green);
+
+	DataCarrier MainDataCarrier;
+	MainDataCarrier.DefaultFontFileName = "//Bebas-Regular.ttf";
+
+
+	std::vector<Button*> Buttons;
+	Buttons.push_back(new Button("abc",&MainDataCarrier, sf::Vector2f(10,10), sf::Vector2f(60, 10)));
 	
-	
+
+
 
 	while (window.isOpen())
 	{
@@ -104,7 +50,17 @@ int OpenUIWindow()
 		}
 
 		window.clear();
-		window.draw(shape);
+		//window.draw(shape);
+		
+
+		//render all of the buttons
+		for (size_t i = 0; i < Buttons.size(); i++)
+		{
+			window.draw(Buttons[i]->shape);
+			window.draw(Buttons[i]->text);
+			Buttons[i]->ButtonTick();
+		}
+
 		window.display();
 	}
 
