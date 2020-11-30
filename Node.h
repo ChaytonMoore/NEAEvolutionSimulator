@@ -1,4 +1,4 @@
-#pragma once
+	#pragma once
 #include "Connection.h"
 class Node :
 	public Component
@@ -13,7 +13,10 @@ public:
 	{
 
 	}
+	float CreatureArea;
+	
 private:
 	void WeightFunction();
 	void MuscleMovement();
+	
 };
