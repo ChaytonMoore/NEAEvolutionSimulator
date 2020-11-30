@@ -1,8 +1,16 @@
 #pragma once
 #include <vector>
+#include <SFML/Graphics.hpp>
+#include <windows.h>
 
 //Struct declarations
-//Yeah some of this is bad practise.
+
+//bool operator>(const sf::Vector2i& a, const sf::Vector2i& b);
+
+
+//bool operator<(const sf::Vector2i& a, const sf::Vector2i& b);
+
+
 
 struct Position
 {
@@ -20,16 +28,32 @@ struct Position
 	}
 };
 
+struct DataCarrier
+{
+	std::string FilePath;
+	std::string DefaultFontFileName;
+	sf::Font StandardFont;
+
+	std::string getPath() {
+		char buffer[MAX_PATH];
+		GetModuleFileName(NULL, buffer, MAX_PATH);
+		std::string::size_type pos = std::string(buffer).find_last_of("\\/");
+		return std::string(buffer).substr(0, pos);
+	}
+};
+
+sf::Font GetDefaultFont(DataCarrier* GetFontFrom);
+
 
 template <typename T, typename X>
-bool Contains(X item, std::vector<T> v)
+bool TContains(X item, std::vector<T> v)
 {
 	return (std::find(v.begin(), v.end(), item) != v.end());
 	
 }
 
 template <typename T>
-int FindElem(T Elem, std::vector<T> Array)
+int TFindElem(T Elem, std::vector<T> Array)
 {
 	int idx = -1;
 	for (size_t i = 0; i < Array.size(); i++)
