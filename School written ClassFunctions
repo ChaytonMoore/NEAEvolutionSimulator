@@ -298,3 +298,70 @@ std::vector<Creature*> LoadCreatures(std::string Filename)
     std::vector<Creature*> Output = new Creature[]
     
 }
+
+
+//The stuff after this point belongs in specific classes or places.
+
+
+
+//Calculate Resistance to Movement(in the node class)
+//This should be applied to each node.
+Position Node::MovementResistance(float area, Position velocity)
+{
+    //https://www.khanacademy.org/computing/computer-programming/programming-natural-simulations/programming-forces/a/air-and-fluid-resistance
+    //^ That is where the function calcualtion comes from
+    
+    //This whole thing is relative force
+    
+    const float MovementConstant = 1;
+    //^This should be changed if stuff needs to be different
+    //float Output = -0.5 * area * pow(velocity,2) * MovementConstant;
+    Position Output = NormaliseVector(velocity);
+    float CoefOutput;
+    CoefOutput = -0.5 * area * pow(ModVector(velocity),2) * MovementConstant;
+    Output.x = Output.x * CoefOutput;
+    Output.y = Output.y * CoefOutput;
+    
+    
+    return Output;
+    
+}
+
+
+//This should be in the position strucuture
+float ModVector(Position Input)
+{
+    return pow(pow(Input.x,2)+pow(Input.y,2),0.5);
+}
+
+//This should be in the position strucuture
+Position NormaliseVector(Position Input)
+{
+    //Probably something that does this in a library
+    return Position(Input.x/ModVector(Input),Input.y/ModVector(Input));
+}
+
+//This is a void function in the node class maybe in class functions
+Position Node::NodeVelocity()
+{
+    //Firstly get all the Muscles
+    //This is at school can't remeber where the stuff is will assume I've got a list of forces and a list of relative normalised positions
+    std::vector<float> MuscleForces;
+    std::vector<Position> RelativePositions; //These lists need to be the same length
+    Position TotalForceDirection = Position(0,0);
+    for (int i = 0; i < MuscleForces.size(); i++) 
+    {
+        TotalForceDirection += RelativePositions[i] * MuscleForces[i];
+    }
+    
+    //Now the that the force is known the mass(weight) must be used to divide it to get the velocity;
+    TotalForceDirection = TotalForceDirection + MovementResistance(GetCreatureArea(),TotalForceDirection);
+    
+    return TotalForceDirection/weight;
+    
+}
+
+
+
+
+
