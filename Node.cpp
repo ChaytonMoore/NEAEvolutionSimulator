@@ -2,7 +2,6 @@
 #include "Muscle.h"
 #include <iostream>
 
-
 Node::Node()
 {
 
@@ -61,16 +60,45 @@ Position Node::NodeVelocity(Node* InputNode)
 	std::vector<float> MuscleForces;
 	std::vector<Position> RelativePositions; //These lists need to be the same length these positions must also be normalised
 	Position Ta  = Position(0,0);
+	Muscle* Temp;
 	for (size_t i = 0; i < InputNode->Connections.size(); i++)
 	{
 		
 		if ((Muscle*)(InputNode->Connections[i]))
 		{
-			MuscleForces.push_back(((Muscle*)(InputNode->Connections[i]))->MuscleOutput);
-			RelativePositions.push_back(Position::NormaliseVector(InputNode->Location - ((Muscle*)(InputNode->Connections[i]))->Location));
+		    Temp = (Muscle*)(InputNode->Connections[i]);
+			MuscleForces.push_back(Temp->MuscleOutput);
+			RelativePositions.push_back(Position::NormaliseVector(InputNode->Location - (Temp->Location));
 			//^ this line is a little too long to be nice
-
-			Ta = InputNode->Location - ((Muscle*)(InputNode->Connections[i]))->Location;
+			
+			//Ta = InputNode->Location - ((Muscle*)(InputNode->Connections[i]))->Location;
+			
+			
+			//Muscles can only expand to double their original length
+			if(Temp->ends[0] == InputNode)
+			{
+			    if(Temp->Startingdistance*2 < Distance(InputNode.Location,Temp->ends[1]))
+			    {
+			        //The latentvelocity will be set to 0 
+			        InputNode->latentvelocity = Position(0,0);
+			        Temp->MovingIn = false;
+			        Temp->MovingOut = true;
+			        Temp->MovementProgression = 5;
+			        
+			    }
+			     
+			}
+			else
+			{
+			   	if(Temp->Startingdistance*2 < Distance(InputNode.Location,Temp->ends[0]))
+			    {
+			        //The latentvelocity will be set to 0 
+			        InputNode->latentvelocity = Position(0,0);
+			        Temp->MovingIn = false;
+			        Temp->MovingOut = true;
+			        Temp->MovementProgression = 5;
+			    } 
+			}
 			
 		}
 		
@@ -78,7 +106,7 @@ Position Node::NodeVelocity(Node* InputNode)
 	}
 
 	
-
+    
 
 	Position TotalForceDirection = Position(0, 0);
 	for (int i = 0; i < MuscleForces.size(); i++)
