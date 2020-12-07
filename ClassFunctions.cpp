@@ -1,9 +1,5 @@
-#include "Creature.h"
-#include "Structures.h"
-#include "stdlib.h"
-#include <iostream>
-#include <fstream>
-#include <string>
+#include "ClassFunctions.h"
+
 
 //Might be a lot better if I don't use classes for muscles and Bones
 //Or maybe just make muscle and bone be the same class with a different parameters
@@ -55,7 +51,7 @@ Creature* GenerateNewRandom(int seed)
 		//This is used to make sure that the nodes are atleast a small distance from each other
 		do
 		{
-			Output->Nodes[i]->Location = Position(rand() % 40 - 20, rand() % 40 - 20);
+			Output->Nodes[i]->Location = Position(rand() % 40 , rand() % 40 );
 			//Remember all locations are relative to the location of the creature
 
 
@@ -66,6 +62,7 @@ Creature* GenerateNewRandom(int seed)
 
 	//Now to use the connections to connect the nodes
 
+	//Definitly maybe remove this code
 	std::vector<Connection*> TempConnections;
 	TempConnections.insert(std::end(TempConnections), std::begin(Output->Bones), std::end(Output->Bones));
 	TempConnections.insert(std::end(TempConnections), std::begin(Output->Muscles), std::end(Output->Muscles));
@@ -90,6 +87,22 @@ Creature* GenerateNewRandom(int seed)
 
 		//TODO make sure that there are no connections in the same place
 	}
+
+	int TempTimes;
+	for (size_t i = 0; i < Output->Muscles.size(); i++)
+	{
+		TempTimes = 0;
+		do
+		{
+			TempTimes++;
+			Output->Muscles[i]->ends[0] = Output->Nodes[rand() % Output->Nodes.size()];
+			Output->Muscles[i]->ends[1] = Output->Nodes[rand() % Output->Nodes.size()];
+		} while (Output->Muscles[i]->ends[0] != Output->Muscles[i]->ends[1] || TempTimes > 15);
+
+		Output->Muscles[i]->Location = Position((Output->Muscles[i]->ends[0]->Location.x + Output->Muscles[i]->ends[1]->Location.x)/2, (Output->Muscles[i]->ends[0]->Location.y + Output->Muscles[i]->ends[1]->Location.y) / 2);
+
+	}
+
 	return Output;
 }
 
@@ -158,10 +171,10 @@ Creature* CreateChild(Creature* Base, int seed)
 			{
 				
 				//if (Output->Nodes[j]->Connections.Contains(Output->Muscles[i]))
-				if(Contains(Output->Muscles[i], Output->Nodes[j]->Connections))
+				if(TContains(Output->Muscles[i], Output->Nodes[j]->Connections))
 				{
 					//Output->Nodes[j]->Connections[Output->Nodes[j]->Connections.find(Output->Muscles[i])] = Output->Bones[Output->Bones.size()];
-					Output->Nodes[j]->Connections[FindElem((Connection*)Output->Muscles[i], Output->Nodes[j]->Connections)] = Output->Bones[Output->Bones.size()];
+					Output->Nodes[j]->Connections[TFindElem((Connection*)Output->Muscles[i], Output->Nodes[j]->Connections)] = Output->Bones[Output->Bones.size()];
 					
 						//That's a long and confusing line, it replaces references
 
@@ -183,10 +196,10 @@ Creature* CreateChild(Creature* Base, int seed)
 			for (int j = 0; j < Output->Nodes.size(); j++)
 			{
 				//if (Output->Nodes[j]->Connections.Contains(Output->Bones[i]), Output->Nodes[j]->Connections)
-				if (Contains(Output->Bones[i], Output->Nodes[j]->Connections))
+				if (TContains(Output->Bones[i], Output->Nodes[j]->Connections))
 				{
 					//Output->Nodes[j]->Connections[Output->Nodes[j].Connections.find(Output->Bones[i])] = Output->Muscles[Output.Muscles.size()];
-					Output->Nodes[j]->Connections[FindElem((Connection*)Output->Bones[i], Output->Nodes[j]->Connections)] = Output->Bones[Output->Muscles.size()];
+					Output->Nodes[j]->Connections[TFindElem((Connection*)Output->Bones[i], Output->Nodes[j]->Connections)] = Output->Bones[Output->Muscles.size()];
 						//That's a long and confusing line, it replaces references
 
 				}
@@ -282,6 +295,43 @@ std::vector<Creature*> Reproduce(std::vector<Creature*> StartCreatures, std::vec
 
 }
 
+
+//This function is elsewhere
+/*
+Position NodeVelocity(Node* InputNode,Creature* NodeOwner)
+{
+	//Firstly get all the Muscles and their forces
+	//This is at school can't remeber where the stuff is will assume I've got a list of forces and a list of relative normalised positions
+
+
+	std::vector<float> MuscleForces;
+	std::vector<Position> RelativePositions; //These lists need to be the same length these positions must also be normalised
+	for (size_t i = 0; i < InputNode->Connections.size(); i++)
+	{
+		if ((Muscle*)(InputNode->Connections[i]))
+		{
+			MuscleForces.push_back(((Muscle*)(InputNode->Connections[i]))->Strength);
+			RelativePositions.push_back(Position::NormaliseVector(InputNode->Location - ((Muscle*)(InputNode->Connections[i]))->Location));
+			//^ this line is a little too long to be nice
+		}
+	} 
+
+
+	
+	Position TotalForceDirection = Position(0, 0);
+	for (int i = 0; i < MuscleForces.size(); i++)
+	{
+		TotalForceDirection += RelativePositions[i] * MuscleForces[i];
+	}
+
+	//Now the that the force is known the mass(weight) must be used to divide it to get the velocity;
+	TotalForceDirection += InputNode->MovementResistance(NodeOwner->Area, TotalForceDirection); //(TotalForceDirection + Node::MovementResistance(NodeOwner->Area, TotalForceDirection));
+
+	return TotalForceDirection / InputNode->Weight;
+
+}
+
+*/
 
 //Don't implement this until later
 /*
