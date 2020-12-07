@@ -10,6 +10,7 @@ public:
 	bool MovingIn = false;
 	bool MovingOut = false;
 
+    float StartingDistance;
 
 	Muscle()
 	{
