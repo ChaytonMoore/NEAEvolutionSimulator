@@ -11,7 +11,7 @@ class Button
 private:
 
 
-	
+
 public:
 	void InitButton(std::string ButtonText, DataCarrier* FontData);
 	void InitButton(DataCarrier* FontData);
@@ -21,6 +21,6 @@ public:
 
 	sf::RectangleShape shape;
 	sf::Text text;
-	
+
 
 };
