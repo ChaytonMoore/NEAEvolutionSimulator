@@ -11,6 +11,8 @@ public:
 	bool MovingOut = false;
 
     float StartingDistance;
+    
+    float StartTimeOffset; //This is used to make the muscles potentially move at different times though it might not be needed because the muscle frequencies will be different.
 
 	Muscle()
 	{
