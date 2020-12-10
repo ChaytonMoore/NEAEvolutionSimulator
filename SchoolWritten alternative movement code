@@ -10,7 +10,8 @@ if (MovingIn)
     ends[1]->ApplyForce(strength,ends[0]);
     
 }
-if(MovingOut)
+
+else if(MovingOut)
 {
     ends[0]->ApplyForce(-strength,ends[1]);
     ends[1]->ApplyForce(-strength,ends[0]);
@@ -28,3 +29,28 @@ if(MuscleSize> StartingSize*2 || MuscleSize < StartingSize/2)
     MovingOut = !MovingOut;
     MovementProgress  = 5;
 }
+
+
+
+//^ This should be in the event tick of the muscle and should be called every tick by the creature.
+
+//This code will be for the node class
+
+void ApplyForce(strength,OtherNode)
+{
+    Position RelativePosition = Position::Normalise(OtherNode->Location);
+    LatentVelocity += RelativePosition * strength / weight; //Needs to be done from within the node class.
+}
+
+//This code should then be placed in the event tick part of the node class
+//The event tick of the nodes must be called after the event tick of the muscles
+
+LatentVelocity += MovementResistance(Area,LatentVelocity)*DeltaTime;
+//^ This reduces the amount of movement that is happening
+Location += LatentVelocity * DeltaTime;
+
+
+
+
+
+
