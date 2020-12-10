@@ -1,0 +1,30 @@
+//Muscle code stuff
+//This is an alternative solution in case the one I'm doing right now doesn't work
+
+//This is code that will be in the muscle class
+
+if (MovingIn)
+{
+    //The muscles now needs to apply a force to a node
+    ends[0]->ApplyForce(strength,ends[1]);
+    ends[1]->ApplyForce(strength,ends[0]);
+    
+}
+if(MovingOut)
+{
+    ends[0]->ApplyForce(-strength,ends[1]);
+    ends[1]->ApplyForce(-strength,ends[0]);
+}
+//Don't know if this next piece of code is nesecary to put here
+float MuscleSize()
+{
+    return ends[0]->Location.DistanceTo(ends[1]->Location);
+}
+//^This goes in the function area not the event tick
+//This next thing does go in the event tick though
+if(MuscleSize> StartingSize*2 || MuscleSize < StartingSize/2)
+{
+    MovingIn = !MovingIn;
+    MovingOut = !MovingOut;
+    MovementProgress  = 5;
+}
