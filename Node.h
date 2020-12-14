@@ -24,6 +24,9 @@ public:
 	void EventTick(float DeltaTime);
 	Position NodeVelocity(Node* InputNode);
 	Position LatentVelocity = Position(0, 0);
+	void ApplyForce(float strength, Node* OtherNode);
+
+
 
 private:
 	void WeightFunction();
