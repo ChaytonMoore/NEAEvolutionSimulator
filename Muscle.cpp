@@ -1,4 +1,10 @@
 #include "Muscle.h"
+#include <iostream>
+
+float Muscle::MuscleSize()
+{
+	return ends[0]->Location.DistanceTo(ends[1]->Location);
+}
 
 void Muscle::MuscleTick(float DeltaTime)
 {
@@ -13,12 +19,12 @@ void Muscle::MuscleTick(float DeltaTime)
 		{
 			MovingOut = true;
 			MovingIn = false;
-			MovementProgress = 5;
+			MovementProgress = 2;
+			std::cout << "r in" << std::endl;
 		}
-		else
-		{
-			MovementProgress -= DeltaTime;
-		}
+
+		ends[0]->ApplyForce(-Strength * Biases[0], ends[1]);
+		ends[1]->ApplyForce(-Strength * Biases[1], ends[0]);
 	}
 
 	if (MovingOut)
@@ -26,17 +32,43 @@ void Muscle::MuscleTick(float DeltaTime)
 		if (MovementProgress <= 0)
 		{
 			MovingOut = false;
-			MovingIn = false;
-			MovementProgress = 5;
+			MovingIn = true;
+			MovementProgress = 2;
+			std::cout << "r out" << std::endl;
 		}
-		else
-		{
-			MovementProgress -= DeltaTime;
-		}
+
+		ends[0]->ApplyForce(Strength*Biases[2], ends[1]);
+		ends[1]->ApplyForce(Strength*Biases[3], ends[0]);
 	}
 
 	MuscleOutput = Strength * (MovingIn -MovingOut);
-	Location.x = (ends[0]->Location.x + ends[1]->Location.x) / 2;
-	Location.y = (ends[0]->Location.y + ends[1]->Location.y) / 2;
+	//Location.x = (ends[0]->Location.x + ends[1]->Location.x) / 2;
+	//Location.y = (ends[0]->Location.y + ends[1]->Location.y) / 2;
 
+	if ((MuscleSize() > (StartingDistance * 2) )&& MovingOut)
+	{
+		MovingIn = true;
+		MovingOut = false;
+		MovementProgress = 2;
+		std::cout <<  "s" << std::endl;
+		ends[0]->LatentVelocity = Position(0, 0);
+		ends[1]->LatentVelocity = Position(0, 0);
+	}
+	if (MovingIn && (MuscleSize() < (StartingDistance / 2)))
+	{
+		std::cout << MovementProgress <<"aa"<< std::endl;
+		MovingIn = false;
+		MovingOut = true;
+		MovementProgress = 2;
+		std::cout << MuscleSize() << std::endl;
+		ends[0]->LatentVelocity = Position(0,0);
+		ends[1]->LatentVelocity = Position(0, 0);
+	}
+
+
+
+
+	MovementProgress = MovementProgress - DeltaTime;
+
+	//std::cout << MuscleSize() << std::endl;
 }
