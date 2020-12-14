@@ -10,9 +10,7 @@ public:
 	bool MovingIn = false;
 	bool MovingOut = false;
 
-    float StartingDistance;
-    
-    float StartTimeOffset; //This is used to make the muscles potentially move at different times though it might not be needed because the muscle frequencies will be different.
+	float StartingDistance;
 
 	Muscle()
 	{
@@ -24,11 +22,16 @@ public:
 	float MuscleOutput = 0;
 
 	Node* ends[2];
+	float MovementProgress;
 
+	float Biases[4] = {1,0.9,1,1.1};
+
+	float MuscleSize();
 private:
-	float MovementProgress = 1;
+	
 	// ^No idea what this value should initially be
 
 
 
 };
+
