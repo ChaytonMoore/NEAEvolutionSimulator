@@ -89,14 +89,14 @@ void Creature::EventTick(float DeltaTime)
 	MuscleMovement();
 
 	SetCreatureArea();
-
+	/*
 	for (int i = 0; i < Nodes.size(); i++)
 	{
 		Nodes[i]->Area = Area;
 		Nodes[i]->EventTick(DeltaTime);
 		
 	}
-	
+	*/
 	for (size_t i = 0; i < Muscles.size(); i++)
 	{
 		Muscles[i]->MuscleTick(DeltaTime);
@@ -104,11 +104,16 @@ void Creature::EventTick(float DeltaTime)
 		
 		if (fmod(LocalTimeValue, Muscles[i]->Frequency) < 0.1 && Muscles[i]->MovingIn == false && Muscles[i]->MovingOut == false)
 		{
-			//std::cout << "yes" << std::endl;
+			std::cout << "yes" << std::endl;
 			Muscles[i]->MovingIn = true;
 		}
 
 		
+	}
+
+	for (size_t i = 0; i < Nodes.size(); i++)
+	{
+		Nodes[i]->EventTick(DeltaTime);
 	}
 	
 }
