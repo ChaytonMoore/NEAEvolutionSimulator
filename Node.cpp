@@ -25,7 +25,7 @@ void Node::MuscleMovement()
 	//Now move the node by what it should be moved by
 	Location += DeltaPosition;
 
-	
+
 }
 
 
@@ -46,67 +46,86 @@ Position Node::MovementResistance(float area, Position velocity)
 	Output.x = Output.x * CoefOutput;
 	Output.y = Output.y * CoefOutput;
 
-	
+
 	return Output;
 
 }
-
+/*
 Position Node::NodeVelocity(Node* InputNode)
 {
 	//Firstly get all the Muscles and their forces
 	//This is at school can't remeber where the stuff is will assume I've got a list of forces and a list of relative normalised positions
 
-	
+
 	std::vector<float> MuscleForces;
 	std::vector<Position> RelativePositions; //These lists need to be the same length these positions must also be normalised
-	Position Ta  = Position(0,0);
+	Position Ta = Position(0, 0);
 	Muscle* Temp;
 	for (size_t i = 0; i < InputNode->Connections.size(); i++)
 	{
-		
+
 		if ((Muscle*)(InputNode->Connections[i]))
 		{
-		    Temp = (Muscle*)(InputNode->Connections[i]);
+			Temp = (Muscle*)(InputNode->Connections[i]);
 			MuscleForces.push_back(Temp->MuscleOutput);
-			RelativePositions.push_back(Position::NormaliseVector(InputNode->Location - (Temp->Location));
+			RelativePositions.push_back(Position::NormaliseVector(InputNode->Location - (Temp->Location)));
 			//^ this line is a little too long to be nice
-			
+
 			//Ta = InputNode->Location - ((Muscle*)(InputNode->Connections[i]))->Location;
-			
-			
+
+
 			//Muscles can only expand to double their original length
-			if(Temp->ends[0] == InputNode)
+			if (Temp->ends[0] == InputNode)
 			{
-			    if(Temp->Startingdistance*2 < Distance(InputNode.Location,Temp->ends[1]))
-			    {
-			        //The latentvelocity will be set to 0 
-			        InputNode->latentvelocity = Position(0,0);
-			        Temp->MovingIn = false;
-			        Temp->MovingOut = true;
-			        Temp->MovementProgression = 5;
-			        
-			    }
-			     
+				if (Temp->StartingDistance * 2 < InputNode->Location.DistanceTo(Temp->ends[1]->Location))
+				{
+					//The latentvelocity will be set to 0 
+					InputNode->LatentVelocity = Position(0, 0);
+
+					Temp->MovingIn = false;
+					Temp->MovingOut = true;
+					Temp->MovementProgress = 5;
+
+				}
+
+				if ((Temp->StartingDistance / 3) > InputNode->Location.DistanceTo(Temp->ends[1]->Location))
+				{
+					InputNode->LatentVelocity = Position(0, 0);
+
+					Temp->MovingIn = true;
+					Temp->MovingOut = false;
+					Temp->MovementProgress = 5;
+				}
+
 			}
 			else
 			{
-			   	if(Temp->Startingdistance*2 < Distance(InputNode.Location,Temp->ends[0]))
-			    {
-			        //The latentvelocity will be set to 0 
-			        InputNode->latentvelocity = Position(0,0);
-			        Temp->MovingIn = false;
-			        Temp->MovingOut = true;
-			        Temp->MovementProgression = 5;
-			    } 
+				if (Temp->StartingDistance * 2 < InputNode->Location.DistanceTo(Temp->ends[0]->Location))
+				{
+					//The latentvelocity will be set to 0 
+					InputNode->LatentVelocity = Position(0, 0);
+					Temp->MovingIn = false;
+					Temp->MovingOut = true;
+					Temp->MovementProgress = 5;
+				}
+
+				if ((Temp->StartingDistance / 3) > InputNode->Location.DistanceTo(Temp->ends[1]->Location))
+				{
+					InputNode->LatentVelocity = Position(0, 0);
+
+					Temp->MovingIn = true;
+					Temp->MovingOut = false;
+					Temp->MovementProgress = 5;
+				}
 			}
-			
+
 		}
-		
-		
+
+
 	}
 
-	
-    
+
+
 
 	Position TotalForceDirection = Position(0, 0);
 	for (int i = 0; i < MuscleForces.size(); i++)
@@ -118,27 +137,41 @@ Position Node::NodeVelocity(Node* InputNode)
 	{
 		//std::cout << "force A " << TotalForceDirection.x << TotalForceDirection.y << std::endl;
 	}
-	
+
 
 	//Now the that the force is known the mass(weight) must be used to divide it to get the velocity;
 	TotalForceDirection += InputNode->MovementResistance(Area, LatentVelocity); //(TotalForceDirection + Node::MovementResistance(NodeOwner->Area, TotalForceDirection));
+
+
 
 	return TotalForceDirection / InputNode->Weight;
 
 }
 
-
+*/
 void Node::EventTick(float DeltaTime)
 {
-	
+
 	//Firstly need to move the node 
+
+	//LatentVelocity += NodeVelocity(this) * DeltaTime;;
+	//Location += LatentVelocity;
+	//if (abs(NodeVelocity(this).x) > 0)
+	//{
+		//std::cout << "velocity " << NodeVelocity(this).x * DeltaTime<< NodeVelocity(this).y * DeltaTime << std::endl;
+	//}
+	LatentVelocity += MovementResistance(Area, LatentVelocity)*DeltaTime;
+	std::cout << (MovementResistance(Area, LatentVelocity)*DeltaTime).x << std::endl;
+	Location += LatentVelocity * DeltaTime;
+}
+
+void Node::ApplyForce(float strength,Node* OtherNode)
+{
+	Position RelativePosition = Position::NormaliseVector(OtherNode->Location - this->Location);
 	
-	LatentVelocity += NodeVelocity(this) * DeltaTime;;
-	Location += LatentVelocity;
-	if (abs(NodeVelocity(this).x) > 0)
-	{
-	//std::cout << "velocity " << NodeVelocity(this).x * DeltaTime<< NodeVelocity(this).y * DeltaTime << std::endl;
-	}
-	
+	LatentVelocity += (RelativePosition * (strength / Weight)); //Needs to be done from within the node class.
 	
 }
+
+
+
