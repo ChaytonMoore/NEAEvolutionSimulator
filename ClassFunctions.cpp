@@ -97,12 +97,16 @@ Creature* GenerateNewRandom(int seed)
 			TempTimes++;
 			Output->Muscles[i]->ends[0] = Output->Nodes[rand() % Output->Nodes.size()];
 			Output->Muscles[i]->ends[1] = Output->Nodes[rand() % Output->Nodes.size()];
-		} while (Output->Muscles[i]->ends[0] != Output->Muscles[i]->ends[1] || TempTimes > 15);
-
+			
+		} while (Output->Muscles[i]->ends[0] == Output->Muscles[i]->ends[1] && TempTimes < 25);
+		
 		Output->Muscles[i]->Location = Position((Output->Muscles[i]->ends[0]->Location.x + Output->Muscles[i]->ends[1]->Location.x)/2, (Output->Muscles[i]->ends[0]->Location.y + Output->Muscles[i]->ends[1]->Location.y) / 2);
-
+		Output->Muscles[i]->StartingDistance = Output->Muscles[i]->ends[0]->Location.DistanceTo(Output->Muscles[i]->ends[1]->Location);
+		Output->Muscles[i]->MovementProgress = 1;
 	}
 
+
+	
 	return Output;
 }
 
