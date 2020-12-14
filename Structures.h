@@ -1,3 +1,17 @@
+#pragma once
+#include <vector>
+#include <SFML/Graphics.hpp>
+#include <windows.h>
+
+//Struct declarations
+
+//bool operator>(const sf::Vector2i& a, const sf::Vector2i& b);
+
+
+//bool operator<(const sf::Vector2i& a, const sf::Vector2i& b);
+
+
+//The position struct is used as a 2D vector so for both positions and movement
 struct Position
 {
 	double x, y;
@@ -99,6 +113,18 @@ int TFindElem(T Elem, std::vector<T> Array)
 	}
 	return idx;
 }
+
+
+struct LineData
+{
+	sf::Vertex LinesD[2];
+
+	LineData(sf::Vertex a, sf::Vertex b)
+	{
+		LinesD[0] = a;
+		LinesD[1] = b;
+	}
+};
 
 
 /*
