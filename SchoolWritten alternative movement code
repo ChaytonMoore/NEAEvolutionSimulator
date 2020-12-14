@@ -34,6 +34,88 @@ if(MuscleSize> StartingSize*2 || MuscleSize < StartingSize/2)
 
 //^ This should be in the event tick of the muscle and should be called every tick by the creature.
 
+
+
+
+
+
+//This is the code that is written on 14/12/2020
+
+
+//This code should be in the creature event tick
+//This is when the muscle is far to big and it brakes which will kill the creature
+for (int i = 0; i < Muscles.size(); i++)//Lets just say we have a list of all the mucles might need to do seomthing to get that
+{
+    if(Muscles[i]->MuscleSize() > (Muscles[i]->StartingDistance * 4))
+    {
+        //Now destroy the creature
+        DestroyCreature(this); // might need a pointer
+    }
+}
+
+
+//This should go somewhere and is used to clean up creatures that are killed
+void DestroyCreature(Creature* A)
+{
+    for (int i = 0; i < A->Mucles.size(); i++)
+    {
+        delete A->Connections[i];
+    }
+    for (int i = 0; i < A->Nodes.size(); i++)
+    {
+        delete A->Nodes[i];
+    }
+    
+    delete A;
+}
+
+
+
+
+
+
+
+
+//This code is for the muscle event tick
+//What it does is apply a huge force when size of the muscle is under 1 and it's a third of its starting StartingDistance
+
+if(MuscleSize() < 1 && MuscleSize() < (StartingDistance/3) && MuscleSize() != 0) //Must avoid divide by 0s
+{
+    ends[0]->ApplyForce(Strength*Biases[2] * (1/abs(MuscleSize())), ends[1]);
+	ends[1]->ApplyForce(Strength*Biases[3] * (1/abs(MuscleSize())), ends[0]);
+	//^ Must use an abs for muscle size because otherwise it would just move between two different points
+}
+
+
+//would probably also be a good idea to somewhat rewrite the creature generation algorithm.
+//Right now the creature generation can be weird but I should get everything else working
+
+//Might as well do some random stuff anyway
+//This will only be able to generate creatures made of muscle and node
+creature* GenerateNewRandom(int seed)
+{
+    srand(seed);
+    Creature* Output = new Creature;
+    for (int i = 0; i < rand() % 2 + 2; i++) 
+    {   
+        Output->Nodes.push_back(new Node);
+        
+    }
+    
+    
+    int ConnectionLimit = (Output->Nodes.size()(Output->Nodes.size() - 1) / 2 )-1;
+    for (int i = 0; i < rand() % ConnectionLimit +1; i++) 
+    {
+        
+    }
+    
+}
+
+
+
+
+
+
 //This code will be for the node class
 
 void ApplyForce(strength,OtherNode)
