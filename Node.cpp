@@ -161,7 +161,7 @@ void Node::EventTick(float DeltaTime)
 		//std::cout << "velocity " << NodeVelocity(this).x * DeltaTime<< NodeVelocity(this).y * DeltaTime << std::endl;
 	//}
 	LatentVelocity += MovementResistance(Area, LatentVelocity)*DeltaTime;
-	std::cout << (MovementResistance(Area, LatentVelocity)*DeltaTime).x << std::endl;
+	//std::cout << (MovementResistance(Area, LatentVelocity)*DeltaTime).x << std::endl;
 	Location += LatentVelocity * DeltaTime;
 }
 
@@ -173,5 +173,9 @@ void Node::ApplyForce(float strength,Node* OtherNode)
 	
 }
 
+bool operator==(const Node a, const Node b)
+{
+	return &a == &b;
+}
 
 
