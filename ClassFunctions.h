@@ -12,6 +12,8 @@ std::vector<T> AppendVector(std::vector<T> a, std::vector<T> b);
 
 Creature* GenerateNewRandom(int seed);
 
+Creature* GenerateNewRandom2(int seed);
+
 Creature* CreateChild(Creature* Base, int seed);
 
 std::vector<Creature*> Reproduce(std::vector<Creature*> StartCreatures, std::vector<float> Fitness, int seed);
