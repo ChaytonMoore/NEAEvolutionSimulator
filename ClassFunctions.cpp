@@ -24,7 +24,7 @@ Creature* GenerateNewRandom(int seed)
 	srand(seed);
 
 	//Use the random numbers to 
-	for (size_t i = 0; i < rand() % 3 + 1; i++)
+	for (size_t i = 0; i < rand() % 3 + 2; i++)
 	{
 		Output->Nodes.push_back(new Node);
 	}
@@ -52,6 +52,7 @@ Creature* GenerateNewRandom(int seed)
 		do
 		{
 			Output->Nodes[i]->Location = Position(rand() % 40 , rand() % 40 );
+			
 			//Remember all locations are relative to the location of the creature
 
 
@@ -64,8 +65,19 @@ Creature* GenerateNewRandom(int seed)
 
 	//Definitly maybe remove this code
 	std::vector<Connection*> TempConnections;
-	TempConnections.insert(std::end(TempConnections), std::begin(Output->Bones), std::end(Output->Bones));
-	TempConnections.insert(std::end(TempConnections), std::begin(Output->Muscles), std::end(Output->Muscles));
+
+	//TempConnections.insert(std::end(TempConnections), std::begin(Output->Bones), std::end(Output->Bones)); \\legacy funcationality
+
+	//creature pointer list thing
+	std::vector<Muscle*> temppointers;
+	for (size_t i = 0; i < Output->Muscles.size(); i++)
+	{
+		temppointers.push_back(Output->Muscles[i]);
+	}
+
+	TempConnections.insert(std::end(TempConnections), std::begin(temppointers), std::end(temppointers));
+	//^This might be fixed or it might be broken
+	
 
 	int RandomNodeIdx1, RandomNodeIdx2;
 	for (size_t i = 0; i < TempConnections.size(); i++)
@@ -98,7 +110,8 @@ Creature* GenerateNewRandom(int seed)
 			Output->Muscles[i]->ends[0] = Output->Nodes[rand() % Output->Nodes.size()];
 			Output->Muscles[i]->ends[1] = Output->Nodes[rand() % Output->Nodes.size()];
 			
-		} while (Output->Muscles[i]->ends[0] == Output->Muscles[i]->ends[1] && TempTimes < 25);
+		} while ((Output->Muscles[i]->ends[0] == Output->Muscles[i]->ends[1]) && TempTimes < 25);
+		
 		
 		Output->Muscles[i]->Location = Position((Output->Muscles[i]->ends[0]->Location.x + Output->Muscles[i]->ends[1]->Location.x)/2, (Output->Muscles[i]->ends[0]->Location.y + Output->Muscles[i]->ends[1]->Location.y) / 2);
 		Output->Muscles[i]->StartingDistance = Output->Muscles[i]->ends[0]->Location.DistanceTo(Output->Muscles[i]->ends[1]->Location);
@@ -109,6 +122,57 @@ Creature* GenerateNewRandom(int seed)
 	
 	return Output;
 }
+
+
+Creature* GenerateNewRandom2(int seed)
+{
+	Creature* Output = new Creature;
+
+
+	//Then create the seed
+	srand(seed);
+
+	//Use the random numbers to 
+	for (size_t i = 0; i < rand() % 2 + 2; i++)
+	{
+		Output->Nodes.push_back(new Node);
+		Output->Nodes.back()->Location = Position(rand() % 20 + 20, rand() % 20 + 20);
+	}
+	
+	for (size_t i = 0; i <  Output->Nodes.size(); i++)
+	{
+		if (Output->Nodes[i]->Connections.empty())
+		{
+			Output->Muscles.push_back(new Muscle);
+			Output->Muscles.back()->ends[0] = Output->Nodes[i];
+			do
+			{
+				Output->Muscles.back()->ends[1] = Output->Nodes[rand()% Output->Nodes.size()];
+
+			} while (Output->Muscles.back()->ends[0] == Output->Muscles.back()->ends[1]);
+		}
+
+	}
+
+
+	for (size_t i = 0; i < Output->Muscles.size(); i++)
+	{
+		Output->Muscles[i]->Strength = (rand() % 4 -2) / 10 + 1;
+		Output->Muscles[i]->Frequency = rand() % 1 + 2;
+		//Set up the starting distance for each muscle
+
+		Output->Muscles[i]->StartingDistance = Output->Muscles[i]->ends[0]->Location.DistanceTo(Output->Muscles[i]->ends[1]->Location);
+			
+
+	}
+
+
+	
+
+	return Output;
+}
+
+
 
 Creature* CreateChild(Creature* Base, int seed)
 {
@@ -165,7 +229,10 @@ Creature* CreateChild(Creature* Base, int seed)
 
 	//Now the probability that the a bone will change to a muscle and a muscle to a bone
 
-	for (int i = 0; i < Output->Muscles.size(); i++)
+
+
+	//Remove the bone stuff
+	/*for (int i = 0; i < Output->Muscles.size(); i++)
 	{
 		if (rand() % 25 == 0)//of course all these random numbers might be changed
 		{
@@ -188,6 +255,7 @@ Creature* CreateChild(Creature* Base, int seed)
 
 		}
 	}
+	*/
 
 	for (int i = 0; i < Output->Bones.size(); i++)
 	{
@@ -200,13 +268,19 @@ Creature* CreateChild(Creature* Base, int seed)
 			for (int j = 0; j < Output->Nodes.size(); j++)
 			{
 				//if (Output->Nodes[j]->Connections.Contains(Output->Bones[i]), Output->Nodes[j]->Connections)
-				if (TContains(Output->Bones[i], Output->Nodes[j]->Connections))
-				{
+
+
+				//Actually this is legacy and isn't needed
+				//if (TContains(Output->Bones[i], Output->Nodes[j].Connections)) //keep
+				//{
 					//Output->Nodes[j]->Connections[Output->Nodes[j].Connections.find(Output->Bones[i])] = Output->Muscles[Output.Muscles.size()];
-					Output->Nodes[j]->Connections[TFindElem((Connection*)Output->Bones[i], Output->Nodes[j]->Connections)] = Output->Bones[Output->Muscles.size()];
+
+
+					//Output->Nodes[j].Connections[TFindElem(&(Connection)Output->Bones[i], Output->Nodes[j].Connections)] = &(Connection)Output->Bones[Output->Muscles.size()];//keep
+
 						//That's a long and confusing line, it replaces references
 
-				}
+				//}
 			}
 			Output->Bones.erase(Output->Bones.begin()+i);
 		}
@@ -256,48 +330,268 @@ Creature* CreateChild(Creature* Base, int seed)
 	return Output;
 }
 
-std::vector<Creature*> Reproduce(std::vector<Creature*> StartCreatures, std::vector<float> Fitness, int seed)
+
+
+std::vector<Node*> ConnectionCheck(Creature* input)
 {
-	//The two lists need to be the same length
-	//Firstly need to order then according to fitness, use a pretty normal sorting algorithm list will only be a max 100 long
-	std::vector<Creature*> SortedCreatures;
-	float value;
-	int index;
-	for (int i = 0; i < Fitness.size(); i++)
+	std::vector<Node*> output;
+	for (size_t i = 0; i < input->Nodes.size(); i++)
 	{
-		value = Fitness[i];
-		index = 0;
-		for (int j = 0; j < Fitness.size(); j++)
+		if (input->Nodes[i]->Connections.size()<1)
 		{
-			if (Fitness[j] > Fitness[i])
+			output.push_back(input->Nodes[i]);
+		}
+	}
+
+	return output;
+}
+
+Creature* CreateChild2(Creature* Base, int seed)
+{
+	srand(time(NULL));
+	Creature* Output = new Creature(*Base);
+	//First thing to do would be to potentially remove a node.
+	int chance = rand() % 4;
+	if (chance == 0 && Output->Nodes.size()>4)
+	{
+		Output->Nodes.erase(Output->Nodes.begin() + rand() % (Output->Nodes.size()-1));
+		std::vector<Muscle*> MusclesToRemove;
+		for (size_t i = 0; i < Output->Muscles.size(); i++)
+		{
+			if (!Output->Muscles[i]->ends[0] || !Output->Muscles[i]->ends[1])
 			{
-				value = Fitness[j];
-				index = j;
+				MusclesToRemove.push_back(Output->Muscles[i]);
 			}
 		}
-		Fitness.erase(Fitness.begin()+i);
-		SortedCreatures.push_back(StartCreatures[i]);
-		StartCreatures.erase(StartCreatures.begin()+i);
+		for (size_t i = 0; i < MusclesToRemove.size(); i++)
+		{
+			delete MusclesToRemove[MusclesToRemove.size()-i];
+		}
+
+		//Add this later
+		//std::vector<Node*> LostConnection = ConnectionCheck(Output);
+
+		//for (size_t i = 0; i < LostConnection.size(); i++)
+		//{
+			
+		//}
 
 	}
 
-	//Now the half of the list with lower fitness
-	for (int i = 0; i < SortedCreatures.size() / 2; i++)
+	//Now time to add the code for potentially adding a new node.
+	chance = rand() % 4;
+
+	if (chance == 0 && Output->Nodes.size() < 8)
 	{
-		SortedCreatures.pop_back();
+		Output->Nodes.push_back(new Node);
+
+		Output->Muscles.push_back(new Muscle);
+		Output->Nodes.back()->Connections.push_back(Output->Muscles.back());
+
+		int OtherNode = rand() % (Output->Nodes.size() - 2);
+		Output->Nodes[OtherNode]->Connections.push_back(Output->Muscles.back());
+
+		Output->Muscles.back()->ends[0] = Output->Nodes.back();
+		Output->Muscles.back()->ends[1] = Output->Nodes[OtherNode];
+
+
+
 	}
-
-
-	for (int i = 0; i < SortedCreatures.size(); i++)
+	for (size_t i = 0; i < Output->Nodes.size(); i++)
 	{
-		SortedCreatures.push_back(CreateChild(SortedCreatures[i], seed));
-		seed++;
-		//Increment the seed so that the new creatures don't all have the same mutations
+		chance = rand() % 3;
+		if (chance == 0)
+		{
+			Output->Nodes[i]->Weight += ((rand() % 2) -1)/10;
+		}
+		else
+		{
+			Output->Nodes[i]->Location.x += rand() % 4 - 2;
+			Output->Nodes[i]->Location.y += rand() % 4 - 2;
+		}
+
+	}
+	for (size_t i = 0; i < Output->Muscles.size(); i++)
+	{
+		chance = rand() % 3;
+		if (chance == 0)
+		{
+			Output->Muscles[i]->Strength += ((rand() % 2) - 1) / 10;
+		}
+
 	}
 
-	return SortedCreatures;
+
+
+	return Output;
 
 }
+
+std::vector<Creature*> Reproduce(std::vector<Creature*> StartCreatures, std::vector<float> Fitness, int seed)
+{
+	std::vector<Creature*> Output;
+	
+
+	std::cout << StartCreatures[0]->GetAverageLocation().x << std::endl;
+
+	//Sort the list, original list needs to remain untouched.
+	std::vector<int> ListOrder;
+	
+	int largest;
+	int idx;
+	
+	while (ListOrder.size()<Fitness.size())
+	{
+		largest = -100000;
+		//^ This should be small enough
+		for (size_t i = 0; i < Fitness.size(); i++)
+		{
+			if (Fitness[i] > largest && !std::count(ListOrder.begin(), ListOrder.end(), i))
+			{
+				largest = Fitness[i];
+				idx = i;
+
+				
+			}
+
+		}
+		
+		ListOrder.push_back(idx);
+		
+	}
+
+	for (size_t i = 0; i < ListOrder.size(); i++)
+	{
+		
+		Output.push_back(StartCreatures[ListOrder[i]]);
+		
+	}
+
+	//Now destroy half of the list for repopulation.
+	Output.erase(Output.begin() + Output.size()/2, Output.end());
+	int StartLength = Output.size();
+	//Now for each of the creatures, create a child.
+
+
+	srand(seed);
+
+	bool TempValid;
+	int TIdx1, TIdx2;
+	for (size_t i = 0; i < StartLength; i++)
+	{
+		//Output.push_back(CreateChild2(Output[i],i));
+		//Output.push_back(GenerateNewRandom2(i));
+		
+		//There might be a problem that copying the creature causes
+		Output.push_back(new Creature());
+		for (size_t j = 0; j < Output[i]->Nodes.size(); j++)
+		{
+			Output.back()->Nodes.push_back(new Node());
+			Output.back()->Nodes.back()->Location.x = Output[i]->Nodes[j]->Location.x + (rand() % 4 -2);
+			Output.back()->Nodes.back()->Location.y = Output[i]->Nodes[j]->Location.y + (rand() % 4 - 2);
+			Output.back()->Nodes.back()->Weight = Output[i]->Nodes[j]->Weight * (1 + ((rand() % 100) / 200 - 0.25));
+		}
+		for (size_t j = 0; j < Output[i]->Muscles.size(); j++)
+		{
+			Output.back()->Muscles.push_back(new Muscle());
+
+			Output.back()->Muscles.back()->Biases[0] = Output[i]->Muscles[j]->Biases[0] * (1+((rand() % 100)/500 - 0.1));
+			Output.back()->Muscles.back()->Biases[1] = Output[i]->Muscles[j]->Biases[1] * (1 + ((rand() % 100) / 500 - 0.1));
+			Output.back()->Muscles.back()->Biases[2] = Output[i]->Muscles[j]->Biases[2] * (1 + ((rand() % 100) / 500 - 0.1));
+			Output.back()->Muscles.back()->Biases[3] = Output[i]->Muscles[j]->Biases[3] * (1 + ((rand() % 100) / 500 - 0.1));
+
+			Output.back()->Muscles.back()->Frequency = Output[i]->Muscles[j]->Frequency;
+			Output.back()->Muscles.back()->Strength = Output[i]->Muscles[j]->Strength;
+			//To set the muscle ends the index of the nodes in the base creature must be found
+
+			//Damn is this a horrible way to do it
+
+
+			TIdx1 = std::distance(Output[i]->Nodes.begin(), std::find(Output[i]->Nodes.begin(), Output[i]->Nodes.end(), (Output[i]->Muscles[j]->ends[0])));
+			TIdx2 = std::distance(Output[i]->Nodes.begin(), std::find(Output[i]->Nodes.begin(), Output[i]->Nodes.end(), Output[i]->Muscles[j]->ends[1])); //keep
+			
+			
+
+			
+			
+
+			Output.back()->Muscles.back()->ends[0] = Output.back()->Nodes[TIdx1];
+			Output.back()->Muscles.back()->ends[1] = Output.back()->Nodes[TIdx2];
+			Output.back()->Muscles.back()->StartingDistance = Output[i]->Muscles[j]->StartingDistance;
+
+
+			Output.back()->Nodes[TIdx1]->Connections.push_back(Output.back()->Muscles.back());
+			Output.back()->Nodes[TIdx2]->Connections.push_back(Output.back()->Muscles.back());
+		}
+
+		if (rand() % 6 == 0)
+		{
+			//The chance that a node is either added or removed
+			if (rand() % 1 == 0)
+			{
+				Output.back()->Nodes.push_back(new Node);
+				//Add new Node
+				//the new node will have to have connections created for it and so on.
+				Output.back()->Nodes.back()->Location = Position(rand() % 15 + 10, rand()% 15 + 10);
+
+				Output.back()->Muscles.push_back(new Muscle());
+				Output.back()->Muscles.back()->ends[0] = Output.back()->Nodes.back();
+				Output.back()->Muscles.back()->ends[1] = Output.back()->Nodes[Output.back()->Nodes.size()-2];
+
+				
+				Output.back()->Muscles[i]->StartingDistance = Output.back()->Muscles[i]->ends[0]->Location.DistanceTo(Output.back()->Muscles[i]->ends[1]->Location);
+			}
+			else if(Output.back()->Nodes.size() > 4)
+			{
+				//Might as well use a now unused variable (TIdx1)
+				TIdx1 = rand() % Output.back()->Nodes.size();
+
+				for (size_t Connect = 0; Connect < Output.back()->Nodes.back()->Connections.size(); Connect++)
+				{
+					
+					delete Output.back()->Nodes[TIdx1]->Connections[Connect];
+				}
+				//Output.back()->Nodes.pop_back();
+				Output.back()->Nodes.erase(Output.back()->Nodes.begin() + TIdx1);
+			}
+		}
+
+		if (rand() % 5 == 0)
+		{
+			//The chnace to add a new muscle, this will deliberatly fail some of the time.
+			//I'll use the variables declared a little while back (TIdx) for the indexing.
+
+			TIdx1 = rand() % (Output.back()->Nodes.size() - 1);
+			TIdx2 = rand() % (Output.back()->Nodes.size() - 1);
+			if (TIdx1 != TIdx2)
+			{
+				TempValid = true;
+				for (size_t i = 0; i < Output.back()->Muscles.size(); i++)
+				{
+					if (((Output.back()->Nodes[TIdx1]) == (Output.back()->Muscles[i]->ends[0]) && (Output.back()->Nodes[TIdx2]) == Output.back()->Muscles[i]->ends[1]) || ((Output.back()->Nodes[TIdx2]) == Output.back()->Muscles[i]->ends[1] && (Output.back()->Nodes[TIdx1]) == Output.back()->Muscles[i]->ends[0]))
+					{
+						TempValid = false;
+					}
+				}
+				if (TempValid)
+				{
+					Output.back()->Muscles.push_back(new Muscle());
+					Output.back()->Muscles.back()->ends[0] = Output.back()->Nodes[TIdx1];
+					Output.back()->Muscles.back()->ends[1] = Output.back()->Nodes[TIdx2];
+				}
+			}
+		}
+	}
+
+
+
+	std::cout << "size" << Output.size() << std::endl;
+	return Output;
+}
+
+
+
+
 
 
 //This function is elsewhere
