@@ -104,7 +104,7 @@ void Creature::EventTick(float DeltaTime)
 		
 		if (fmod(LocalTimeValue, Muscles[i]->Frequency) < 0.1 && Muscles[i]->MovingIn == false && Muscles[i]->MovingOut == false)
 		{
-			std::cout << "yes" << std::endl;
+			//std::cout << "yes" << std::endl;
 			Muscles[i]->MovingIn = true;
 		}
 
@@ -116,4 +116,14 @@ void Creature::EventTick(float DeltaTime)
 		Nodes[i]->EventTick(DeltaTime);
 	}
 	
+}
+
+
+void Creature::Offset(float YAmount)
+{
+	for (size_t i = 0; i < Nodes.size(); i++)
+	{
+		Nodes[i]->Location.y += YAmount;
+	}
+
 }
