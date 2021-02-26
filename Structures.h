@@ -3,6 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <windows.h>
 
+
 //Struct declarations
 
 //bool operator>(const sf::Vector2i& a, const sf::Vector2i& b);
@@ -125,6 +126,15 @@ struct LineData
 		LinesD[1] = b;
 	}
 };
+
+struct CreaturePositionData
+{
+	std::vector<Position> Data;
+};
+
+
+//This is only meant to be used as a single 
+
 
 
 /*
